@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "392538770245",
+    "project_id": "mobdeve-machine-project",
+    "storage_bucket": "mobdeve-machine-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:392538770245:android:b82b37fd0fd3d295274c2c",
+        "android_client_info": {
+          "package_name": "com.mobdeve.s11.g25.pidyon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "392538770245-uo1a5hlcaacgbdrpgpm03lg0dlj6iivt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mobdeve.s11.g25.pidyon",
+            "certificate_hash": "2dba1a99725021485d39b353adbf1692d8cdb6b3"
+          }
+        },
+        {
+          "client_id": "392538770245-tpvlrt4a9bk6j04ljhik1o4kqiuoi2tl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfqrmigWijVFzQuKqlHY0PHL2Z4kxgq0I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "392538770245-tpvlrt4a9bk6j04ljhik1o4kqiuoi2tl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
