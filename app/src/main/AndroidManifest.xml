@@ -9,7 +9,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Pidyon">
-        <activity android:name=".controller.MainActivity">
+
+        <activity
+            android:name=".controller.SignUpActivity"
+            android:windowSoftInputMode="adjustResize"/>
+
+        <activity
+            android:name=".controller.SignInActivity"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,17 +24,20 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".controller.MainActivity"/>
+
         <!-- Firebase Cloud Messaging -->
         <service
             android:name=".model.FCM"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
     </application>
+
 </manifest>
