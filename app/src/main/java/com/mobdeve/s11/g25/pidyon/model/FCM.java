@@ -20,7 +20,7 @@ public class FCM extends FirebaseMessagingService {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onMessageReceived(@NonNull @org.jetbrains.annotations.NotNull RemoteMessage remoteMessage) {
+    public void onMessageReceived(RemoteMessage remoteMessage) {
         String title = remoteMessage.getNotification().getTitle();
         String texts = remoteMessage.getNotification().getBody();
         Log.d("TEST", title + ": " + texts);
@@ -46,7 +46,7 @@ public class FCM extends FirebaseMessagingService {
     }
 
     @Override
-    public void onNewToken(@NonNull @org.jetbrains.annotations.NotNull String s) {
+    public void onNewToken(String s) {
         super.onNewToken(s);
     }
 }

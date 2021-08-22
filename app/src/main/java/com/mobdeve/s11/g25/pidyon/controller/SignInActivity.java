@@ -1,22 +1,21 @@
 package com.mobdeve.s11.g25.pidyon.controller;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.mobdeve.s11.g25.pidyon.R;
+import com.google.firebase.auth.FirebaseUser;
 import com.mobdeve.s11.g25.pidyon.databinding.ActivitySignInBinding;
-
-import org.jetbrains.annotations.NotNull;
 
 public class SignInActivity extends AppCompatActivity {
 
@@ -37,6 +36,13 @@ public class SignInActivity extends AppCompatActivity {
 
         // Sign in
         binding.buttonSignIn.setOnClickListener(v -> {
+            // Minimizes the virtual keyboard
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+
             // Retrieve inputs
             String email_address = binding.inputEmail.getText().toString().trim();
             String password = binding.inputPassword.getText().toString().trim();
@@ -63,9 +69,17 @@ public class SignInActivity extends AppCompatActivity {
             // Authentication
             firebaseAuth.signInWithEmailAndPassword(email_address, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
-                public void onComplete(@NonNull @NotNull Task<AuthResult> task) {
+                public void onComplete(Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                        // Email Verification
+                        if (user.isEmailVerified()) {
+                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        } else {
+                            user.sendEmailVerification();
+                            Toast.makeText(SignInActivity.this, "Check your email to verify your account!", Toast.LENGTH_LONG).show();
+                        }
                     } else {
                         Toast.makeText(SignInActivity.this, "Failed to login! check your credentials!", Toast.LENGTH_LONG).show();
                     }
