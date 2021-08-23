@@ -12,4 +12,10 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="sign_up">Sign Up</string>
     <string name="select_user">Select User</string>
+    <string name="add_contact">Add Contact</string>
+    <string name="chats">Chats</string>
+    <string name="contacts">Contacts</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="type_a_message">Type a message</string>
 </resources>

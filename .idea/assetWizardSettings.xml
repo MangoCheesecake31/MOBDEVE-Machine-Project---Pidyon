@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$PROJECT_DIR$/../../../Maxson%20Chan/AppData/Local/Android/Sdk/icons/material/materialiconsround/add/round_add_24.xml" />
+                                      <entry key="url" value="file:/$PROJECT_DIR$/../../../Maxson%20Chan/AppData/Local/Android/Sdk/icons/material/materialiconsround/send/round_send_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,7 +28,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_add" />
+                            <entry key="outputName" value="ic_send" />
                             <entry key="sourceFile" value="C:\Users\Maxson Chan\Desktop\MOBDEVE-Machine-Project---Pidyon" />
                           </map>
                         </option>
