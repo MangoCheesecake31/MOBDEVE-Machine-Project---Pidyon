@@ -37,7 +37,7 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private FirebaseStorage firebaseStorage;
     private Uri selected_image;
-    private final String username_regex = "^[A-Za-z][A-Za-z0-9_]{7,29}$";
+    private final String username_regex = "^[A-Za-z][A-Za-z0-9_]{5,29}$";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +62,9 @@ public class SignUpActivity extends AppCompatActivity {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
 
+            // Progress
+            toggleProgressMode();
+
             // Retrieves inputs
             String username = binding.inputName.getEditableText().toString().trim();
             String email_address = binding.inputEmail.getEditableText().toString().trim();
@@ -69,51 +72,9 @@ public class SignUpActivity extends AppCompatActivity {
             String confirm_password = binding.inputConfirmPassword.getEditableText().toString().trim();
 
             // Data validation
-            if (username.isEmpty()) {
-                binding.inputName.setError("Username is required!");
-                binding.inputName.requestFocus();
+            if (!validateData(username, email_address, password, confirm_password)) {
+                toggleProgressMode();
                 return;
-            }
-
-            if (Character.isDigit(username.charAt(0))) {
-                binding.inputName.setError("Username must start with a letter!");
-                binding.inputName.requestFocus();
-                return;
-            }
-
-            if (!Pattern.compile(username_regex).matcher(username).matches()) {
-                binding.inputName.setError("Username can only contain letters and numbers!");
-                binding.inputName.requestFocus();
-                return;
-            }
-
-            if (email_address.isEmpty()) {
-                binding.inputEmail.requestFocus();
-                binding.inputEmail.setError("Email Address is required!");
-                return;
-            }
-
-            if (!Patterns.EMAIL_ADDRESS.matcher(email_address).matches()) {
-                binding.inputEmail.setError("Please set a valid email!");
-                binding.inputEmail.requestFocus();
-                return;
-            }
-
-            if (password.isEmpty()) {
-                binding.inputPassword.setError("Please provide a password!");
-                binding.inputPassword.requestFocus();
-                return;
-            }
-
-            if (password.length() < 6) {
-                binding.inputPassword.setError("Minimum password length is 6!");
-                binding.inputPassword.requestFocus();
-                return;
-            }
-
-            if (!password.equals(confirm_password)) {
-                binding.inputConfirmPassword.requestFocus();
-                binding.inputConfirmPassword.setError("Password confirmation does not match!");
             }
 
             // Authentication & Database
@@ -128,28 +89,18 @@ public class SignUpActivity extends AppCompatActivity {
                         database.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(Task<Void> task) {
+                                toggleProgressMode();
                                 if (task.isSuccessful()) {
                                     Toast.makeText(SignUpActivity.this, "User has been successfully registered", Toast.LENGTH_LONG).show();
-
-                                    // 3 Second Delay
-                                    new CountDownTimer(3000, 1000) {
-                                        @Override
-                                        public void onTick(long millisUntilFinished) {
-                                            // ¯\_(ツ)_/¯
-                                        }
-
-                                        @Override
-                                        public void onFinish() {
-                                            onBackPressed();
-                                        }
-                                    }.start();
-
+                                    delayTime(3);
+                                    finish();
                                 } else {
                                     Toast.makeText(SignUpActivity.this, "Failed to register! Try again!", Toast.LENGTH_LONG).show();
                                 }
                             }
                         });
                     } else {
+                        toggleProgressMode();
                         Toast.makeText(SignUpActivity.this, "Email Address is already registered!", Toast.LENGTH_LONG).show();
                     }
                 }
@@ -158,8 +109,8 @@ public class SignUpActivity extends AppCompatActivity {
 
         // Select Image
         binding.imageProfile.setOnClickListener(v -> {
-            // Max Resolution: 1000x1000, Camera & Gallery, Croppable, Max Size: 1MB
-            ImagePicker.Companion.with(SignUpActivity.this).maxResultSize(1000, 1000).crop().compress(1024).start();
+            // Max Resolution: 1000x1000, Gallery, Croppable, Max Size: 1MB
+            ImagePicker.Companion.with(SignUpActivity.this).maxResultSize(1000, 1000).cropSquare().galleryOnly().compress(1024).start();
         });
     }
 
@@ -175,6 +126,11 @@ public class SignUpActivity extends AppCompatActivity {
 
     // Upload User Profile Image to Firebase Cloud Storage
     private void uploadImage() {
+        // No Image
+        if (selected_image == null) {
+            return;
+        }
+
         // Filename: user_avatars/<User ID>
         StorageReference storageReference = firebaseStorage.getReference("user_avatars/" + FirebaseAuth.getInstance().getCurrentUser().getUid());
 
@@ -189,5 +145,94 @@ public class SignUpActivity extends AppCompatActivity {
                 Log.d("DEBAGGER", " User Avatar Upload Fail");
             }
         });
+    }
+
+    // Validate User Data
+    private boolean validateData(String username, String email_address, String password, String confirm_password) {
+        if (username.isEmpty()) {
+            binding.inputName.setError("Username is required!");
+            binding.inputName.requestFocus();
+            return false;
+        }
+
+        if (Character.isDigit(username.charAt(0))) {
+            binding.inputName.setError("Username must start with a letter!");
+            binding.inputName.requestFocus();
+            return false;
+        }
+
+        if (username.length() < 6) {
+            binding.inputName.setError("Minimum username length is 6!");
+            binding.inputName.requestFocus();
+            return false;
+        }
+
+        if (!Pattern.compile(username_regex).matcher(username).matches()) {
+            binding.inputName.setError("Username can only contain letters and numbers!");
+            binding.inputName.requestFocus();
+            return false;
+        }
+
+        if (email_address.isEmpty()) {
+            binding.inputEmail.requestFocus();
+            binding.inputEmail.setError("Email Address is required!");
+            return false;
+        }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email_address).matches()) {
+            binding.inputEmail.setError("Please set a valid email!");
+            binding.inputEmail.requestFocus();
+            return false;
+        }
+
+        if (password.isEmpty()) {
+            binding.inputPassword.setError("Please provide a password!");
+            binding.inputPassword.requestFocus();
+            return false;
+        }
+
+        if (password.length() < 6) {
+            binding.inputPassword.setError("Minimum password length is 6!");
+            binding.inputPassword.requestFocus();
+            return false;
+        }
+
+        if (!password.equals(confirm_password)) {
+            binding.inputConfirmPassword.requestFocus();
+            binding.inputConfirmPassword.setError("Password confirmation does not match!");
+            return false;
+        }
+
+        return true;
+    }
+
+    // 3 Second Delay
+    private void delayTime(int seconds) {
+        // 3 Second Delay
+        new CountDownTimer(seconds * 1000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                // ¯\_(ツ)_/¯
+            }
+
+            @Override
+            public void onFinish() {
+                onBackPressed();
+            }
+        }.start();
+    }
+
+    // Toggles Visibility of Progress Related Views
+    private void toggleProgressMode() {
+        Log.d("DEBAGGER", "Toggled Progress Mode!");
+        if (binding.buttonSignUp.isClickable()) {
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.buttonSignUp.setVisibility(View.INVISIBLE);
+            binding.buttonSignUp.setClickable(false);
+        } else {
+            binding.progressBar.setVisibility(View.INVISIBLE);
+            binding.buttonSignUp.setVisibility(View.VISIBLE);
+            binding.buttonSignUp.setClickable(true);
+        }
     }
 }

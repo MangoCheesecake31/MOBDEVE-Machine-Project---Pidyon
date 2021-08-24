@@ -9,6 +9,10 @@ public class User {
     private String token;
 
     // Constructors
+    public User() {
+
+    }
+
     public User(String username, String email_address) {
         this.username = username;
         this.email_address = email_address;

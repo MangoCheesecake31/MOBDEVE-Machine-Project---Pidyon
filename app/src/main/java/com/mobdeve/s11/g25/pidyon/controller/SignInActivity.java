@@ -43,26 +43,16 @@ public class SignInActivity extends AppCompatActivity {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
 
+            // Progress
+            toggleProgressMode();
+
             // Retrieve inputs
             String email_address = binding.inputEmail.getText().toString().trim();
             String password = binding.inputPassword.getText().toString().trim();
 
             // Input validation
-            if (email_address.isEmpty()) {
-                binding.inputEmail.setError("Please enter your email address!");
-                binding.inputEmail.requestFocus();
-                return;
-            }
-
-            if (!Patterns.EMAIL_ADDRESS.matcher(email_address).matches()) {
-                binding.inputEmail.setError("Please enter a valid email address!");
-                binding.inputEmail.requestFocus();
-                return;
-            }
-
-            if (password.isEmpty()) {
-                binding.inputPassword.setError("Please enter your password!");
-                binding.inputPassword.requestFocus();
+            if (!validateData(email_address, password)) {
+                toggleProgressMode();
                 return;
             }
 
@@ -72,19 +62,59 @@ public class SignInActivity extends AppCompatActivity {
                 public void onComplete(Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        toggleProgressMode();
 
                         // Email Verification
                         if (user.isEmailVerified()) {
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            finish();
                         } else {
                             user.sendEmailVerification();
                             Toast.makeText(SignInActivity.this, "Check your email to verify your account!", Toast.LENGTH_LONG).show();
                         }
                     } else {
+                        toggleProgressMode();
                         Toast.makeText(SignInActivity.this, "Failed to login! check your credentials!", Toast.LENGTH_LONG).show();
                     }
                 }
             });
         });
+    }
+
+    // Validate Data
+    private boolean validateData(String email_address, String password) {
+        if (email_address.isEmpty()) {
+            binding.inputEmail.setError("Please enter your email address!");
+            binding.inputEmail.requestFocus();
+            return false;
+        }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email_address).matches()) {
+            binding.inputEmail.setError("Please enter a valid email address!");
+            binding.inputEmail.requestFocus();
+            return false;
+        }
+
+        if (password.isEmpty()) {
+            binding.inputPassword.setError("Please enter your password!");
+            binding.inputPassword.requestFocus();
+            return false;
+        }
+
+        return true;
+    }
+
+    // Toggles Visibility of Progress Related Views
+    private void toggleProgressMode() {
+        if (binding.buttonSignIn.isClickable()) {
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.buttonSignIn.setVisibility(View.INVISIBLE);
+            binding.buttonSignIn.setClickable(false);
+        } else {
+            binding.progressBar.setVisibility(View.INVISIBLE);
+            binding.buttonSignIn.setVisibility(View.VISIBLE);
+            binding.buttonSignIn.setClickable(true);
+        }
     }
 }
