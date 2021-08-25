@@ -9,11 +9,12 @@ import com.makeramen.roundedimageview.RoundedImageView;
 import com.mobdeve.s11.g25.pidyon.R;
 
 public class MessageViewHolderReceiver extends MessageViewHolder {
-
+    // Attributes
     private TextView textMessage;
     private TextView textDateTime;
     private RoundedImageView imageProfile;
 
+    // Constructors
     public MessageViewHolderReceiver(final View view) {
         super(view);
 
@@ -22,6 +23,7 @@ public class MessageViewHolderReceiver extends MessageViewHolder {
         imageProfile = view.findViewById(R.id.imageProfile);
     }
 
+    // Methods
     @Override
     public void bindDate(Message message) {
         this.textMessage.setText(message.getText());

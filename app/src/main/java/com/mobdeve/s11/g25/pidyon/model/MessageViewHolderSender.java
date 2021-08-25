@@ -6,10 +6,11 @@ import android.widget.TextView;
 import com.mobdeve.s11.g25.pidyon.R;
 
 public class MessageViewHolderSender extends MessageViewHolder {
-
+    // Attributes
     private TextView textMessage;
     private TextView textDateTime;
 
+    // Constructors
     public MessageViewHolderSender(final View view) {
         super(view);
 
@@ -17,8 +18,10 @@ public class MessageViewHolderSender extends MessageViewHolder {
         textDateTime = view.findViewById(R.id.textDateTime);
     }
 
+    // Methods
     @Override
     public void bindDate(Message message) {
+        textMessage.setText(message.getText());
 
     }
 }

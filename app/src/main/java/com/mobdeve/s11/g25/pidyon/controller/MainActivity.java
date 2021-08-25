@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         configureProfile();
         setListeners();
 
-        Log.w("DEVS: ", "User: " + uid + " in session");
+        Log.d("PROGRAM-FLOW: ", "User: " + uid + " in session");
     }
 
     private void setListeners() {
@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Signing Out
         binding.imageSignOut.setOnClickListener(v -> {
+            Log.d("PROGRAM-FLOW", "User Signing Out!");
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(MainActivity.this, SignInActivity.class);
             startActivity(intent);

@@ -19,6 +19,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageViewHolder> {
         this.sender = sender;
     }
 
+    // Methods
     @Override
     public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);

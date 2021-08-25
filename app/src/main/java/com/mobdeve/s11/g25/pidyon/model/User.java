@@ -24,6 +24,7 @@ public class User {
         this.token = token;
     }
 
+    // Methods
     public String getUsername() {
         return username;
     }
