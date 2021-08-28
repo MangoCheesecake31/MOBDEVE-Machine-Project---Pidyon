@@ -101,6 +101,16 @@
             android:textSize="@dimen/_13ssp"
             android:textStyle="bold"/>
 
+        <TextView
+            android:id="@+id/textRecoverPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_15ssp"
+            android:text="Recover Password"
+            android:textColor="@color/primary"
+            android:textSize="@dimen/_13ssp"
+            android:textStyle="bold"/>
+
     </LinearLayout>
 
 </ScrollView>
