@@ -11,6 +11,9 @@
         android:theme="@style/Theme.Pidyon">
         <activity android:name=".controller.PasswordRecoveryActivity"></activity>
         <activity
+            android:name=".controller.ProfileActivity"
+            android:exported="true" />
+        <activity
             android:name=".controller.ChatActivity"
             android:exported="true" />
         <activity

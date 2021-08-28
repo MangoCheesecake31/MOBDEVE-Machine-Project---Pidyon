@@ -21,4 +21,10 @@
     <string name="password_recovery">Password Recovery</string>
     <string name="recover_password">Recover Password</string>
     <string name="enter_email_of_account_to_recover">Enter email of account to recover</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="current_password">Current Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="cancel">Cancel</string>
 </resources>
