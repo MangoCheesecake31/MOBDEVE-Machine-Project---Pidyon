@@ -11,5 +11,5 @@ public abstract class MessageViewHolder extends RecyclerView.ViewHolder {
     }
 
     //  Methods
-    public abstract void bindDate(Message message);
+    public abstract void bindData(Message message);
 }

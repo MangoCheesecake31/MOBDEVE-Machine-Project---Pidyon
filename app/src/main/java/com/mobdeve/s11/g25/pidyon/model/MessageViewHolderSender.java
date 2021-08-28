@@ -20,7 +20,7 @@ public class MessageViewHolderSender extends MessageViewHolder {
 
     // Methods
     @Override
-    public void bindDate(Message message) {
+    public void bindData(Message message) {
         textMessage.setText(message.getText());
 
     }

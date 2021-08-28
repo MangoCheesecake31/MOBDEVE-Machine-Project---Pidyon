@@ -25,7 +25,7 @@ public class MessageViewHolderReceiver extends MessageViewHolder {
 
     // Methods
     @Override
-    public void bindDate(Message message) {
+    public void bindData(Message message) {
         this.textMessage.setText(message.getText());
 
         // TODO: Set Time & Image Profile

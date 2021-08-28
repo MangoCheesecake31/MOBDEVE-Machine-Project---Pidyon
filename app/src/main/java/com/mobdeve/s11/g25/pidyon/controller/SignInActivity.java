@@ -34,6 +34,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void setListeners() {
+        // Create Account
         binding.textCreateNewAccount.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), SignUpActivity.class)));
 
         // Sign in
@@ -73,6 +74,11 @@ public class SignInActivity extends AppCompatActivity {
                     Toast.makeText(SignInActivity.this, "Failed to login! check your credentials!", Toast.LENGTH_LONG).show();
                 }
             });
+        });
+
+        // Recover Password
+        binding.textRecoverPassword.setOnClickListener(v -> {
+            startActivity(new Intent(getApplicationContext(), PasswordRecoveryActivity.class));
         });
     }
 

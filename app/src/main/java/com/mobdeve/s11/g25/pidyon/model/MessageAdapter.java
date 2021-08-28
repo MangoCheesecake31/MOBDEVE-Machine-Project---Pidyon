@@ -33,7 +33,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageViewHolder> {
 
     @Override
     public void onBindViewHolder(MessageViewHolder holder, int position) {
-        holder.bindDate(data.get(position));
+        holder.bindData(data.get(position));
     }
 
     @Override

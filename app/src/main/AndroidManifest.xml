@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Pidyon">
+        <activity android:name=".controller.PasswordRecoveryActivity"></activity>
         <activity
             android:name=".controller.ChatActivity"
             android:exported="true" />
