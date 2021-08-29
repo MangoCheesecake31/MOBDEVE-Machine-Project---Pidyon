@@ -5,24 +5,21 @@ import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mobdeve.s11.g25.pidyon.R;
 import com.mobdeve.s11.g25.pidyon.databinding.ActivityMainBinding;
-import com.mobdeve.s11.g25.pidyon.model.Contact;
 
 
 import java.io.File;
@@ -30,7 +27,7 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
-    private FragmentAdapter adapter;
+    private MainFragmentAdapter adapter;
 
     private String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     private DatabaseReference firebaseDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("Profile");
@@ -42,14 +39,58 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        configureTabLayout();
-        configureProfile();
-        setListeners();
-
         Log.d("PROGRAM-FLOW", "User: " + uid + " in session");
+
+        if (retrieveProfile()) {
+            Log.d("PROGRAM-FLOW", "Retrieved Profile!");
+            configureTabLayout();
+            setListeners();
+        } else {
+            Log.d("PROGRAM-FLOW", "Retrieving Profile Failed!");
+        }
+    }
+
+    private boolean retrieveProfile() {
+        Log.d("PROGRAM-FLOW", "Retrieving Profile from Database...");
+        firebaseDatabase.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DataSnapshot result = task.getResult();
+                String username = result.child("username").getValue(String.class);
+                String email_address = result.child("emailAddress").getValue(String.class);
+                String token = result.child("token").getValue(String.class);
+                binding.textName.setText(username);
+
+                // SharedPreferences
+                SharedPreferences sharedPreferences = getSharedPreferences("User", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                // Retrieve Profile Avatar
+                binding.imageProfile.setImageResource(R.drawable.default_avatar);
+                try {
+                    final File file = File.createTempFile(uid, "jpeg");
+                    firebaseStorage.getFile(file).addOnSuccessListener(taskSnapshot -> {
+                        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                        binding.imageProfile.setImageBitmap(bitmap);
+
+                        // Save to Internal Storage
+                        new ImageSaver(getApplicationContext()).setFileName(uid + ".jpeg").setDirectoryName("Avatars").save(bitmap);
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    editor.putString("USERNAME", username);
+                    editor.putString("EMAIL_ADDRESS", email_address);
+                    editor.putString("TOKEN", token);
+                    editor.apply();
+                }
+            }
+        });
+        Log.d("PROGRAM-FLOW", "?" + getSharedPreferences("User", MODE_PRIVATE).getString("USERNAME", ""));
+        return !getSharedPreferences("User", MODE_PRIVATE).getString("USERNAME", "").isEmpty();
     }
 
     private void setListeners() {
+        // Switching Tabs
         binding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -78,48 +119,20 @@ public class MainActivity extends AppCompatActivity {
 
         // Adding Contacts
         binding.fabNewChat.setOnClickListener(v -> {
-            firebaseDatabase.get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    String username = task.getResult().child("username").getValue(String.class);
-                    String email_address = task.getResult().child("emailAddress").getValue(String.class);
-                    String token = task.getResult().child("token").getValue(String.class);
-
-                    Intent intent = new Intent(MainActivity.this, UsersActivity.class);
-                    intent.putExtra("USERNAME", username);
-                    intent.putExtra("EMAIL_ADDRESS", email_address);
-                    intent.putExtra("TOKEN", token);
-                    startActivity(intent);
-
-                    Log.d("PROGRAM-FLOW", "Retrieved User Contact!");
-                } else {
-                    Log.d("PROGRAM-FLOW", "Retrieving User Contact Failed!");
-                }
-            });
+            Intent intent = new Intent(MainActivity.this, UsersActivity.class);
+            startActivity(intent);
         });
 
         // Profile Page
         binding.imageProfile.setOnClickListener(v -> {
-            firebaseDatabase.get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    String username = task.getResult().child("username").getValue(String.class);
-                    String email_address = task.getResult().child("emailAddress").getValue(String.class);
-
-                    Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-                    intent.putExtra("USERNAME", username);
-                    intent.putExtra("EMAIL_ADDRESS", email_address);
-                    startActivity(intent);
-
-                    Log.d("PROGRAM-FLOW", "Retrieved User Contact!");
-                } else {
-                    Log.d("PROGRAM-FLOW", "Retrieving User Contact Failed!");
-                }
-            });
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
         });
     }
 
     private void configureTabLayout() {
         FragmentManager fm = getSupportFragmentManager();
-        adapter = new FragmentAdapter(fm, getLifecycle());
+        adapter = new MainFragmentAdapter(fm, getLifecycle());
         binding.viewPager.setAdapter(adapter);
 
         binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
@@ -128,33 +141,6 @@ public class MainActivity extends AppCompatActivity {
                 binding.tabLayout.selectTab(binding.tabLayout.getTabAt(position));
             }
         });
-    }
-
-    private void configureProfile() {
-        // Retrieve Username
-        firebaseDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                binding.textName.setText(snapshot.child("username").getValue(String.class));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-
-            }
-        });
-
-        // Retrieve Profile Avatar
-        binding.imageProfile.setImageResource(R.drawable.default_avatar);
-        try {
-            final File file = File.createTempFile(uid, "jpeg");
-            firebaseStorage.getFile(file).addOnSuccessListener(taskSnapshot -> {
-                Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-                binding.imageProfile.setImageBitmap(bitmap);
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override

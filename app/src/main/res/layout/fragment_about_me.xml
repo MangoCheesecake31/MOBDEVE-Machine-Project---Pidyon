@@ -8,7 +8,7 @@
     android:overScrollMode="never"
     android:padding="@dimen/_24ssp"
     android:scrollbars="none"
-    tools:context=".controller.AboutMeFragment">
+    tools:context=".controller.fragments.AboutMeFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

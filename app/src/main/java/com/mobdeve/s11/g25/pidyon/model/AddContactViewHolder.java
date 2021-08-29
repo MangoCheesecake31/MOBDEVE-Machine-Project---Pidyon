@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,6 +36,7 @@ public class AddContactViewHolder extends RecyclerView.ViewHolder {
     protected TextView textName;
     protected TextView textEmail;
     protected RoundedImageView imageProfile;
+    protected AppCompatImageView imageAddFriend;
 
     private ArrayList<Contact> data;
     private DatabaseReference firebaseDatabase = FirebaseDatabase.getInstance().getReference();
@@ -47,10 +49,11 @@ public class AddContactViewHolder extends RecyclerView.ViewHolder {
         imageProfile = itemView.findViewById(R.id.imageProfile);
         textName = itemView.findViewById(R.id.textName);
         textEmail = itemView.findViewById(R.id.textEmail);
+        imageAddFriend = itemView.findViewById(R.id.imageAddFriend);
     }
 
     // Methods
-    public void bindData(Contact contact, Contact user_contact) {
+    public void bindData(Contact contact, Contact user) {
         textName.setText(contact.getUsername());
         textEmail.setText(contact.getEmailAddress());
 
@@ -68,12 +71,12 @@ public class AddContactViewHolder extends RecyclerView.ViewHolder {
             e.printStackTrace();
         }
 
-        // Placeholder Template used
-        imageProfile.setOnClickListener(v -> {
-            imageProfile.setClickable(false);
-            imageProfile.setImageResource(R.drawable.ic_photo_camera_black_48dp);
+        // Add Friend
+        imageAddFriend.setOnClickListener(v -> {
+            imageAddFriend.setClickable(false);
+            imageAddFriend.setImageResource(R.drawable.background_chat_input);
 
-            // Send Friend Request
+            // Update Database (Requests)
             firebaseDatabase.child("Users").child(contact.getContactID()).child("Requests").push().child("contactID").setValue(uid);
             firebaseDatabase.child("Users").child(uid).child("Pending-Requests").push().child("contactID").setValue(contact.getContactID());
         });

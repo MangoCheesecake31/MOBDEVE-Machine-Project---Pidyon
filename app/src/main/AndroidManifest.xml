@@ -10,11 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pidyon">
         <activity
-            android:name=".controller.ProfileInformationActivity"
+            android:name=".controller.ProfileActivity"
             android:exported="true" />
         <activity android:name=".controller.PasswordRecoveryActivity" />
         <activity
-            android:name=".controller.ProfileActivity"
+            android:name=".controller.EditProfileActivity"
             android:exported="true" />
         <activity
             android:name=".controller.ChatActivity"

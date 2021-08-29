@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.mobdeve.s11.g25.pidyon.model.AddContactAdapter;
 import com.mobdeve.s11.g25.pidyon.model.Contact;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class UsersActivity extends AppCompatActivity {
     private ActivityUsersBinding binding;
@@ -40,7 +42,7 @@ public class UsersActivity extends AppCompatActivity {
 
     private void configureRecyclerView() {
         Log.d("PROGRAM-FLOW", "Retrieving Possible Contacts!");
-        Contact user_contact = retrieveUserContact();
+        Contact user = generateUserContact();
 
         /*
             Variable Names:
@@ -85,8 +87,11 @@ public class UsersActivity extends AppCompatActivity {
                     }
                 }
 
+                // Sort Possible Contacts
+                Collections.sort(data);
+
                 // Set RecyclerView Adapters
-                AddContactAdapter adapter = new AddContactAdapter(data, user_contact);
+                AddContactAdapter adapter = new AddContactAdapter(data, user);
                 binding.usersRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 binding.usersRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 binding.usersRecyclerView.setAdapter(adapter);
@@ -96,10 +101,11 @@ public class UsersActivity extends AppCompatActivity {
     }
 
     // Create a Contact Object of the Current User in Session
-    private Contact retrieveUserContact() {
-        String username = getIntent().getStringExtra("USERNAME");
-        String email_address = getIntent().getStringExtra("EMAIL_ADDRESS");
-        String token = getIntent().getStringExtra("TOKEN");
+    private Contact generateUserContact() {
+        SharedPreferences sp = getSharedPreferences("User", MODE_PRIVATE);
+        String username = sp.getString("USERNAME", "");
+        String email_address = sp.getString("EMAIL_ADDRESS", "");
+        String token = sp.getString("TOKEN", "");
 
         return new Contact(username, email_address, uid, token);
     }
