@@ -80,7 +80,6 @@ public class SignUpActivity extends AppCompatActivity {
                         String token = get_token_task.getResult();
                         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-
                         Contact user = new Contact(username, email_address, uid, token);
                         uploadImage();
 
@@ -107,7 +106,7 @@ public class SignUpActivity extends AppCompatActivity {
         // Select Image
         binding.imageProfile.setOnClickListener(v -> {
             // Max Resolution: 1000x1000, Gallery, Croppable, Max Size: 1MB
-            ImagePicker.Companion.with(SignUpActivity.this).maxResultSize(1000, 1000).cropSquare().galleryOnly().compress(1024).start();
+            ImagePicker.Companion.with(SignUpActivity.this).maxResultSize(1000, 1000).cropSquare().compress(1024).start();
         });
     }
 

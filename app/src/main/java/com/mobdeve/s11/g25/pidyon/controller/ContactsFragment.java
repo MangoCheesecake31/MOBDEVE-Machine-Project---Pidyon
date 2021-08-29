@@ -2,6 +2,7 @@ package com.mobdeve.s11.g25.pidyon.controller;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -62,21 +63,19 @@ public class ContactsFragment extends Fragment {
     // Setup Contact Recycler View
     private void configureRecyclerView(String uid) {
         // Retrieve Contacts
-        firebaseDatabase.child(uid).child("Contacts").get().addOnCompleteListener(task -> {
-
-
+        firebaseDatabase.child("Users").child(uid).child("Contacts").get().addOnCompleteListener(get_contacts_task -> {
             ArrayList<Contact> data = new ArrayList<>();
-//            for (DataSnapshot dss: task.getResult().getChildren()) {
-//                String username = dss.child("username").getValue(String.class);
-//                String email_address = dss.child("emailAddress").getValue(String.class);
-//                String contact_id = dss.child("contactID").getValue(String.class);
-//
-//                data.add(new Contact(username, email_address, contact_id, "adjifjgodsgodsgods"));
-//            }
+            for (DataSnapshot dss: get_contacts_task.getResult().getChildren()) {
+                String username = dss.child("username").getValue(String.class);
+                String email_address = dss.child("emailAddress").getValue(String.class);
+                String contact_id = dss.child("contactID").getValue(String.class);
+                String token = dss.child("token").getValue(String.class);
+            }
 
             // Sort Contacts
-//            Collections.sort(data);
+            Collections.sort(data);
 
+            // Setup RecyclerView
             ContactAdapter adapter = new ContactAdapter(data);
             binding.usersRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             binding.usersRecyclerView.setItemAnimator(new DefaultItemAnimator());

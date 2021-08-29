@@ -1,6 +1,5 @@
 package com.mobdeve.s11.g25.pidyon.controller;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.widget.ViewPager2;
@@ -10,9 +9,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -22,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.mobdeve.s11.g25.pidyon.R;
 import com.mobdeve.s11.g25.pidyon.databinding.ActivityMainBinding;
 import com.mobdeve.s11.g25.pidyon.model.Contact;
 
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     private DatabaseReference firebaseDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("Profile");
-    private StorageReference storage = FirebaseStorage.getInstance().getReference("user_avatars/" + uid);
+    private StorageReference firebaseStorage = FirebaseStorage.getInstance().getReference("user_avatars/" + uid);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,13 +84,32 @@ public class MainActivity extends AppCompatActivity {
                     String email_address = task.getResult().child("emailAddress").getValue(String.class);
                     String token = task.getResult().child("token").getValue(String.class);
 
-                    Log.d("PROGRAM-FLOW", "Retrieved User Contact!");
-
                     Intent intent = new Intent(MainActivity.this, UsersActivity.class);
                     intent.putExtra("USERNAME", username);
                     intent.putExtra("EMAIL_ADDRESS", email_address);
                     intent.putExtra("TOKEN", token);
                     startActivity(intent);
+
+                    Log.d("PROGRAM-FLOW", "Retrieved User Contact!");
+                } else {
+                    Log.d("PROGRAM-FLOW", "Retrieving User Contact Failed!");
+                }
+            });
+        });
+
+        // Profile Page
+        binding.imageProfile.setOnClickListener(v -> {
+            firebaseDatabase.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    String username = task.getResult().child("username").getValue(String.class);
+                    String email_address = task.getResult().child("emailAddress").getValue(String.class);
+
+                    Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                    intent.putExtra("USERNAME", username);
+                    intent.putExtra("EMAIL_ADDRESS", email_address);
+                    startActivity(intent);
+
+                    Log.d("PROGRAM-FLOW", "Retrieved User Contact!");
                 } else {
                     Log.d("PROGRAM-FLOW", "Retrieving User Contact Failed!");
                 }
@@ -127,9 +145,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Retrieve Profile Avatar
+        binding.imageProfile.setImageResource(R.drawable.default_avatar);
         try {
             final File file = File.createTempFile(uid, "jpeg");
-            storage.getFile(file).addOnSuccessListener(taskSnapshot -> {
+            firebaseStorage.getFile(file).addOnSuccessListener(taskSnapshot -> {
                 Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
                 binding.imageProfile.setImageBitmap(bitmap);
             });
