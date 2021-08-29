@@ -1,6 +1,5 @@
 package com.mobdeve.s11.g25.pidyon.controller;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -15,24 +14,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.github.dhaval2404.imagepicker.ImagePicker;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+
 import com.mobdeve.s11.g25.pidyon.databinding.ActivitySignUpBinding;
 import com.mobdeve.s11.g25.pidyon.model.Contact;
-import com.mobdeve.s11.g25.pidyon.model.User;
 
-import java.util.ArrayList;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -89,12 +80,12 @@ public class SignUpActivity extends AppCompatActivity {
                         String token = get_token_task.getResult();
                         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-                        User user = new User(username, email_address, token);
-                        ArrayList<Contact> contact = new ArrayList<>();
+
+                        Contact user = new Contact(username, email_address, uid, token);
                         uploadImage();
 
                         // Add User Data to Database at <user_id>/User/.
-                        firebaseDatabase.child(uid).child("User").setValue(user).addOnCompleteListener(add_database_task -> {
+                        firebaseDatabase.child("Users").child(uid).child("Profile").setValue(user).addOnCompleteListener(add_database_task -> {
                             toggleProgressMode();
                             if (add_database_task.isSuccessful()) {
                                 Log.d("PROGRAM-FLOW", "User Data Added to Database!");

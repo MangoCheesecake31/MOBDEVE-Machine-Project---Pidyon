@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.mobdeve.s11.g25.pidyon.R;
+
 import java.util.ArrayList;
 
 
@@ -22,13 +24,13 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactViewHolder> {
     // Methods
     @Override
     public ContactViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_container_user, parent, false);
         return new ContactViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(ContactViewHolder holder, int position) {
-
+        holder.bindData(data.get(position));
     }
 
     @Override

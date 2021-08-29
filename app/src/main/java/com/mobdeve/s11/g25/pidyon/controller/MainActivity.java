@@ -1,5 +1,6 @@
 package com.mobdeve.s11.g25.pidyon.controller;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.widget.ViewPager2;
@@ -10,7 +11,8 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -18,22 +20,21 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mobdeve.s11.g25.pidyon.databinding.ActivityMainBinding;
-import com.mobdeve.s11.g25.pidyon.model.User;
+import com.mobdeve.s11.g25.pidyon.model.Contact;
+
 
 import java.io.File;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
-
     private ActivityMainBinding binding;
-    private FragmentAdapter fragmentAdapter;
+    private FragmentAdapter adapter;
 
     private String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-    private DatabaseReference database = FirebaseDatabase.getInstance().getReference().child(uid);
+    private DatabaseReference firebaseDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("Profile");
     private StorageReference storage = FirebaseStorage.getInstance().getReference("user_avatars/" + uid);
 
     @Override
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         configureProfile();
         setListeners();
 
-        Log.d("PROGRAM-FLOW: ", "User: " + uid + " in session");
+        Log.d("PROGRAM-FLOW", "User: " + uid + " in session");
     }
 
     private void setListeners() {
@@ -75,12 +76,33 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+
+        // Adding Contacts
+        binding.fabNewChat.setOnClickListener(v -> {
+            firebaseDatabase.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    String username = task.getResult().child("username").getValue(String.class);
+                    String email_address = task.getResult().child("emailAddress").getValue(String.class);
+                    String token = task.getResult().child("token").getValue(String.class);
+
+                    Log.d("PROGRAM-FLOW", "Retrieved User Contact!");
+
+                    Intent intent = new Intent(MainActivity.this, UsersActivity.class);
+                    intent.putExtra("USERNAME", username);
+                    intent.putExtra("EMAIL_ADDRESS", email_address);
+                    intent.putExtra("TOKEN", token);
+                    startActivity(intent);
+                } else {
+                    Log.d("PROGRAM-FLOW", "Retrieving User Contact Failed!");
+                }
+            });
+        });
     }
 
     private void configureTabLayout() {
         FragmentManager fm = getSupportFragmentManager();
-        fragmentAdapter = new FragmentAdapter(fm, getLifecycle());
-        binding.viewPager.setAdapter(fragmentAdapter);
+        adapter = new FragmentAdapter(fm, getLifecycle());
+        binding.viewPager.setAdapter(adapter);
 
         binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
@@ -92,11 +114,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void configureProfile() {
         // Retrieve Username
-        database.addValueEventListener(new ValueEventListener() {
+        firebaseDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                User user = snapshot.getValue(User.class);
-                binding.textName.setText(user.getUsername());
+                binding.textName.setText(snapshot.child("username").getValue(String.class));
             }
 
             @Override

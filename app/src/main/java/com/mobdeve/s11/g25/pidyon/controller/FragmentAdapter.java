@@ -14,13 +14,7 @@ public class FragmentAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-
-        switch(position) {
-            case 1:
-                return new ContactsFragment();
-        }
-
-        return new ChatsFragment();
+        return (position == 0) ? new ChatsFragment() : new ContactsFragment();
     }
 
     @Override
