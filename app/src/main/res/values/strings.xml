@@ -27,4 +27,9 @@
     <string name="confirm_new_password">Confirm New Password</string>
     <string name="save_changes">Save Changes</string>
     <string name="cancel">Cancel</string>
+    <string name="profile_information">Profile Information</string>
+    <string name="about_me">About Me</string>
+    <string name="friend_requests">Friend Requests</string>
+    <string name="blocked_users">Blocked Users</string>
+    <string name="username">Username</string>
 </resources>
