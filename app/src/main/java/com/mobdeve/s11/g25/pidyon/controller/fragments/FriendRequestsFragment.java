@@ -2,65 +2,87 @@ package com.mobdeve.s11.g25.pidyon.controller.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mobdeve.s11.g25.pidyon.R;
+import com.mobdeve.s11.g25.pidyon.databinding.FragmentFriendRequestsBinding;
+import com.mobdeve.s11.g25.pidyon.model.Contact;
+import com.mobdeve.s11.g25.pidyon.model.adapters.ContactAdapter;
+import com.mobdeve.s11.g25.pidyon.model.adapters.FriendRequestAdapter;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FriendRequestsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+
 public class FriendRequestsFragment extends Fragment {
+    // Attributes
+    private FragmentFriendRequestsBinding binding;
+    private DatabaseReference firebaseDatabase = FirebaseDatabase.getInstance().getReference();
+    private String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    // Constructors
     public FriendRequestsFragment() {
-        // Required empty public constructor
+
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FriendRequestsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FriendRequestsFragment newInstance(String param1, String param2) {
-        FriendRequestsFragment fragment = new FriendRequestsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    // Methods
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_friend_requests, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentFriendRequestsBinding.inflate(getLayoutInflater());
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        configureRecyclerView();
+    }
+
+    private void configureRecyclerView() {
+        // Retrieve Requests
+        firebaseDatabase.child("Requests").child("Receive").child(uid).get().addOnCompleteListener(receive_task -> {
+            ArrayList<String> requests = new ArrayList<>();
+            ArrayList<Contact> data = new ArrayList<>();
+
+            for (DataSnapshot dssr: receive_task.getResult().getChildren()) {
+                requests.add(dssr.child("contactID").getValue(String.class));
+            }
+
+            // Retrieve Contact Objects
+            firebaseDatabase.child("Users").get().addOnCompleteListener(users_task -> {
+                for (DataSnapshot dssu : users_task.getResult().getChildren()) {
+                    if (requests.contains(dssu.getKey())) {
+                        DataSnapshot profile = dssu.child("Profile");
+                        String username = profile.child("username").getValue(String.class);
+                        String email_address = profile.child("emailAddress").getValue(String.class);
+                        String contact_id = profile.child("contactID").getValue(String.class);
+                        String token = profile.child("token").getValue(String.class);
+
+                        data.add(new Contact(username, email_address, contact_id, token));
+                    }
+                }
+
+                // Setup RecyclerView
+                FriendRequestAdapter adapter = new FriendRequestAdapter(data);
+                binding.usersRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                binding.usersRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                binding.usersRecyclerView.setAdapter(adapter);
+            });
+        });
     }
 }

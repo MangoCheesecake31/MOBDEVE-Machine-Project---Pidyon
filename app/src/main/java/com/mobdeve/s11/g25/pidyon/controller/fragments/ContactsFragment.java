@@ -20,11 +20,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mobdeve.s11.g25.pidyon.databinding.FragmentContactsBinding;
 import com.mobdeve.s11.g25.pidyon.model.Contact;
-import com.mobdeve.s11.g25.pidyon.model.ContactAdapter;
+import com.mobdeve.s11.g25.pidyon.model.adapters.ContactAdapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 
 
@@ -32,6 +30,7 @@ public class ContactsFragment extends Fragment {
     // Attributes
     private FragmentContactsBinding binding;
     private DatabaseReference firebaseDatabase = FirebaseDatabase.getInstance().getReference();
+    private String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     // Constructors
     public ContactsFragment() {
@@ -57,31 +56,43 @@ public class ContactsFragment extends Fragment {
         Log.d("PROGRAM-FLOW", "Viewing Contacts!");
 
         // Recycler View
-        configureRecyclerView(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        configureRecyclerView();
     }
 
     // Setup Contact Recycler View
-    private void configureRecyclerView(String uid) {
+    private void configureRecyclerView() {
         // Retrieve Contacts
-        firebaseDatabase.child("Users").child(uid).child("Contacts").get().addOnCompleteListener(get_contacts_task -> {
+        firebaseDatabase.child("Contacts").child(uid).get().addOnCompleteListener(contacts_task -> {
+            ArrayList<String> contacts = new ArrayList<>();
             ArrayList<Contact> data = new ArrayList<>();
-            for (DataSnapshot dss: get_contacts_task.getResult().getChildren()) {
-                String username = dss.child("username").getValue(String.class);
-                String email_address = dss.child("emailAddress").getValue(String.class);
-                String contact_id = dss.child("contactID").getValue(String.class);
-                String token = dss.child("token").getValue(String.class);
 
-                data.add(new Contact(username, email_address, contact_id, token));
+            for (DataSnapshot dssc: contacts_task.getResult().getChildren()) {
+                contacts.add(dssc.child("contactID").getValue(String.class));
             }
 
-            // Sort Contacts
-            Collections.sort(data);
+            // Retrieve Contact Objects
+            firebaseDatabase.child("Users").get().addOnCompleteListener(users_task -> {
+                for (DataSnapshot dssu: users_task.getResult().getChildren()) {
+                    if (contacts.contains(dssu.getKey())) {
+                        DataSnapshot profile = dssu.child("Profile");
+                        String username = profile.child("username").getValue(String.class);
+                        String email_address = profile.child("emailAddress").getValue(String.class);
+                        String contact_id = profile.child("contactID").getValue(String.class);
+                        String token = profile.child("token").getValue(String.class);
 
-            // Setup RecyclerView
-            ContactAdapter adapter = new ContactAdapter(data);
-            binding.usersRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            binding.usersRecyclerView.setItemAnimator(new DefaultItemAnimator());
-            binding.usersRecyclerView.setAdapter(adapter);
+                        data.add(new Contact(username, email_address, contact_id, token));
+                    }
+                }
+
+                // Sort Contacts
+                Collections.sort(data);
+
+                // Setup RecyclerView
+                ContactAdapter adapter = new ContactAdapter(data);
+                binding.usersRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                binding.usersRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                binding.usersRecyclerView.setAdapter(adapter);
+            });
         });
     }
 }

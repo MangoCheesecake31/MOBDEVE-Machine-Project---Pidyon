@@ -42,6 +42,9 @@ public class AboutMeFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        SharedPreferences sp = this.getActivity().getSharedPreferences("User", Context.MODE_PRIVATE);
+        binding.textUsername.setText(sp.getString("USERNAME", ""));
+
         Bitmap bitmap = new ImageSaver(this.getActivity()).setFileName(uid + ".jpeg").setDirectoryName("Avatars").load();
         if (bitmap != null) {
             binding.imageProfile.setImageBitmap(bitmap);

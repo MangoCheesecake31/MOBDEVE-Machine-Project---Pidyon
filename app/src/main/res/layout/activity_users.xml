@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:background="@color/primary"
-    tools:context=".controller.UsersActivity">
+    tools:context=".controller.AddContactActivity">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageBack"

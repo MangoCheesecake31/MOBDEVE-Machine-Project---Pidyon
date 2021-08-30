@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Adding Contacts
         binding.fabNewChat.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, UsersActivity.class);
+            Intent intent = new Intent(MainActivity.this, AddContactActivity.class);
             startActivity(intent);
         });
 

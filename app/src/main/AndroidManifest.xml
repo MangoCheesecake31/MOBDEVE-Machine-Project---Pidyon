@@ -20,7 +20,7 @@
             android:name=".controller.ChatActivity"
             android:exported="true" />
         <activity
-            android:name=".controller.UsersActivity"
+            android:name=".controller.AddContactActivity"
             android:exported="true" />
         <activity
             android:name=".controller.SignUpActivity"
