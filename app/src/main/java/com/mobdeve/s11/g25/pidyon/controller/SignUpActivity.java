@@ -133,7 +133,7 @@ public class SignUpActivity extends AppCompatActivity {
         StorageReference storageReference = firebaseStorage.getReference("user_avatars/" + FirebaseAuth.getInstance().getCurrentUser().getUid());
         storageReference.putFile(selected_image).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Log.d("PROGRAM-FLOW", " User Avatar Uploaded");
+                Log.d("PROGRAM-FLOW", "User Avatar Uploaded");
             } else {
                 Log.d("PROGRAM-FLOW", "User Avatar Upload Fail");
             }

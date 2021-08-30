@@ -1,5 +1,6 @@
 package com.mobdeve.s11.g25.pidyon.controller;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -17,6 +18,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -64,6 +67,9 @@ public class EditProfileActivity extends AppCompatActivity {
             String new_password = binding.inputNewPassword.getEditableText().toString().trim();
             String confirm_new_password = binding.inputConfirmNewPassword.getEditableText().toString().trim();
 
+            SharedPreferences sp = getSharedPreferences("User", MODE_PRIVATE);
+            String email_address = sp.getString("EMAIL_ADDRESS", "");
+
             // Validate Data
             if (!validateData(username, password, new_password, confirm_new_password)) {
                 toggleProgressMode();
@@ -72,22 +78,30 @@ public class EditProfileActivity extends AppCompatActivity {
 
             // Re-Authenticate
             Log.d("PROGRAM-FLOW", "Reauthenticating User!");
-            AuthCredential credential = EmailAuthProvider.getCredential(getIntent().getStringExtra("EMAIL_ADDRESS"), password);
+            AuthCredential credential = EmailAuthProvider.getCredential(email_address, password);
             FirebaseAuth.getInstance().getCurrentUser().reauthenticate(credential).addOnCompleteListener(authenticate_task -> {
                 if (authenticate_task.isSuccessful()) {
                     Log.d("PROGRAM-FLOW", "User Authenticated!");
+
+                    updateImage();
                     FirebaseAuth.getInstance().getCurrentUser().updatePassword(new_password).addOnCompleteListener(update_task -> {
-                        toggleProgressMode();
                         if (update_task.isSuccessful()) {
                             Log.d("PROGRAM-FLOW", "Password Updated!");
 
-                            //  UPDATE USERNAME TODO
-
-                            binding.inputCurrentPassword.setText("");
-                            binding.inputNewPassword.setText("");
-                            binding.inputConfirmNewPassword.setText("");
-                            Toast.makeText(EditProfileActivity.this, "Account Updated!", Toast.LENGTH_LONG).show();
+                            firebaseDatabase.child("Users").child(uid).child("Profile").child("username").setValue(username).addOnCompleteListener(task -> {
+                                toggleProgressMode();
+                                if (task.isSuccessful()) {
+                                    Log.d("PROGRAM-FLOW", "Username Updated!");
+                                    binding.inputCurrentPassword.setText("");
+                                    binding.inputNewPassword.setText("");
+                                    binding.inputConfirmNewPassword.setText("");
+                                    Toast.makeText(EditProfileActivity.this, "Account Updated!", Toast.LENGTH_LONG).show();
+                                } else {
+                                    Log.d("PROGRAM-FLOW", "Username Update Failed!");
+                                }
+                            });
                         } else {
+                            toggleProgressMode();
                             Log.d("PROGRAM-FLOW", "Password Update Failed!");
                         }
                     });
@@ -223,7 +237,7 @@ public class EditProfileActivity extends AppCompatActivity {
         // Filename: user_avatars/<User ID>
         firebaseStorage.putFile(selected_image).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Log.d("PROGRAM-FLOW", " New User Avatar Uploaded");
+                Log.d("PROGRAM-FLOW", "New User Avatar Uploaded");
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selected_image);
                     new ImageSaver(getApplicationContext()).setFileName(uid + ".jpeg").setDirectoryName("Avatars").save(bitmap);

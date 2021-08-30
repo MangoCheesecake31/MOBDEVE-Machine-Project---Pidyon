@@ -70,6 +70,8 @@ public class ContactsFragment extends Fragment {
                 String email_address = dss.child("emailAddress").getValue(String.class);
                 String contact_id = dss.child("contactID").getValue(String.class);
                 String token = dss.child("token").getValue(String.class);
+
+                data.add(new Contact(username, email_address, contact_id, token));
             }
 
             // Sort Contacts

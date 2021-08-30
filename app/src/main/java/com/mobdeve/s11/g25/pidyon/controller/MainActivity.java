@@ -50,6 +50,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Update Avatar & Username if Changes were made
+        SharedPreferences sp = getSharedPreferences("User", MODE_PRIVATE);
+        binding.textName.setText(sp.getString("USERNAME", ""));
+        Bitmap bitmap = new ImageSaver(getApplicationContext()).setFileName(uid + ".jpeg").setDirectoryName("Avatars").load();
+        if (bitmap != null) {
+            binding.imageProfile.setImageBitmap(bitmap);
+        }
+    }
+
     private boolean retrieveProfile() {
         Log.d("PROGRAM-FLOW", "Retrieving Profile from Database...");
         firebaseDatabase.get().addOnCompleteListener(task -> {

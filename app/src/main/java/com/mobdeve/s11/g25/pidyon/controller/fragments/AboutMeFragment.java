@@ -39,6 +39,16 @@ public class AboutMeFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        Bitmap bitmap = new ImageSaver(this.getActivity()).setFileName(uid + ".jpeg").setDirectoryName("Avatars").load();
+        if (bitmap != null) {
+            binding.imageProfile.setImageBitmap(bitmap);
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentAboutMeBinding.inflate(getLayoutInflater());
         return binding.getRoot();
