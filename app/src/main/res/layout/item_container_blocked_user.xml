@@ -34,7 +34,7 @@
         android:textColor="@color/primary_text"
         android:textSize="@dimen/_13ssp"
         app:layout_constraintBottom_toTopOf="@id/viewSupporter"
-        app:layout_constraintEnd_toStartOf="@id/imageMessageFriend"
+        app:layout_constraintEnd_toStartOf="@id/imageAcceptFriend"
         app:layout_constraintStart_toEndOf="@id/imageProfile"/>
 
     <TextView
@@ -47,12 +47,12 @@
         android:maxLines="1"
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/_10ssp"
-        app:layout_constraintEnd_toStartOf="@id/imageMessageFriend"
+        app:layout_constraintEnd_toStartOf="@id/imageAcceptFriend"
         app:layout_constraintStart_toEndOf="@+id/imageProfile"
         app:layout_constraintTop_toBottomOf="@id/viewSupporter"/>
 
     <TextView
-        android:id="@+id/imageMessageFriend"
+        android:id="@+id/imageAcceptFriend"
         android:layout_width="@dimen/_52ssp"
         android:layout_height="@dimen/_32ssp"
         android:layout_marginEnd="@dimen/_5ssp"

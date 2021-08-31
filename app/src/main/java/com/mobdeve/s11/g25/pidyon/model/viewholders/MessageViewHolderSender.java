@@ -1,10 +1,11 @@
 package com.mobdeve.s11.g25.pidyon.model.viewholders;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
 import com.mobdeve.s11.g25.pidyon.R;
-import com.mobdeve.s11.g25.pidyon.model.Message;
+import com.mobdeve.s11.g25.pidyon.model.PidyonMessage;
 
 public class MessageViewHolderSender extends MessageViewHolder {
     // Attributes
@@ -21,8 +22,8 @@ public class MessageViewHolderSender extends MessageViewHolder {
 
     // Methods
     @Override
-    public void bindData(Message message) {
+    public void bindData(PidyonMessage message, Context context) {
         textMessage.setText(message.getText());
-
+        textDateTime.setText(message.getTime());
     }
 }

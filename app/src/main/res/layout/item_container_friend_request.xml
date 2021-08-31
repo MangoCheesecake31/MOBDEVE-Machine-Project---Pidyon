@@ -34,7 +34,7 @@
         android:textColor="@color/primary_text"
         android:textSize="@dimen/_13ssp"
         app:layout_constraintBottom_toTopOf="@id/viewSupporter"
-        app:layout_constraintEnd_toStartOf="@id/imageMessageFriend"
+        app:layout_constraintEnd_toStartOf="@id/imageAcceptFriend"
         app:layout_constraintStart_toEndOf="@id/imageProfile"/>
 
     <TextView
@@ -47,24 +47,24 @@
         android:maxLines="1"
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/_10ssp"
-        app:layout_constraintEnd_toStartOf="@id/imageMessageFriend"
+        app:layout_constraintEnd_toStartOf="@id/imageAcceptFriend"
         app:layout_constraintStart_toEndOf="@+id/imageProfile"
         app:layout_constraintTop_toBottomOf="@id/viewSupporter"/>
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imageMessageFriend"
+        android:id="@+id/imageAcceptFriend"
         android:layout_width="@dimen/_30ssp"
         android:layout_height="@dimen/_30ssp"
         android:layout_marginEnd="@dimen/_5ssp"
         android:background="@drawable/background_icon"
         android:padding="@dimen/_6ssp"
         android:src="@drawable/ic_chat"
-        app:layout_constraintEnd_toStartOf="@id/imageRemoveFriend"
+        app:layout_constraintEnd_toStartOf="@id/imageDeclineFriend"
         app:layout_constraintTop_toTopOf="parent"
         android:tint="@color/white"/>
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imageRemoveFriend"
+        android:id="@+id/imageDeclineFriend"
         android:layout_width="@dimen/_30ssp"
         android:layout_height="@dimen/_30ssp"
         android:layout_marginEnd="@dimen/_16ssp"

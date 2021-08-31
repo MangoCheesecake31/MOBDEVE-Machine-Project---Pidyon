@@ -8,7 +8,6 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +16,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mobdeve.s11.g25.pidyon.R;
-import com.mobdeve.s11.g25.pidyon.controller.EditProfileActivity;
-import com.mobdeve.s11.g25.pidyon.controller.ImageSaver;
+import com.mobdeve.s11.g25.pidyon.controller.activity.EditProfileActivity;
+import com.mobdeve.s11.g25.pidyon.model.ImageSaver;
 import com.mobdeve.s11.g25.pidyon.databinding.FragmentAboutMeBinding;
 
 public class AboutMeFragment extends Fragment {

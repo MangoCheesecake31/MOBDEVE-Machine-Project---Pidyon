@@ -11,12 +11,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mobdeve.s11.g25.pidyon.R;
 import com.mobdeve.s11.g25.pidyon.databinding.FragmentChatsBinding;
 
 public class ChatsFragment extends Fragment {
     // Attributes
     private FragmentChatsBinding binding;
+    private String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private DatabaseReference firebaseDatabase = FirebaseDatabase.getInstance().getReference();
 
     // Constructors
     public ChatsFragment() {
@@ -38,6 +46,21 @@ public class ChatsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding.conversationsRecyclerView.setVisibility(View.VISIBLE);
+        configureRecyclerView();
+    }
+
+    private void configureRecyclerView() {
+        firebaseDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+
+            }
+        });
     }
 }

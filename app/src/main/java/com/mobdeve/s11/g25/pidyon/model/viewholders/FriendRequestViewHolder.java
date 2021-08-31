@@ -2,17 +2,12 @@ package com.mobdeve.s11.g25.pidyon.model.viewholders;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -37,8 +32,8 @@ public class FriendRequestViewHolder extends RecyclerView.ViewHolder {
         imageProfile =  itemView.findViewById(R.id.imageProfile);
         textName = itemView.findViewById(R.id.textName);
         textEmail = itemView.findViewById(R.id.textEmail);
-        imageAcceptRequest = itemView.findViewById(R.id.imageMessageFriend);
-        imageDeclineRequest = itemView.findViewById(R.id.imageRemoveFriend);
+        imageAcceptRequest = itemView.findViewById(R.id.imageAcceptFriend);
+        imageDeclineRequest = itemView.findViewById(R.id.imageDeclineFriend);
     }
 
     // Methods

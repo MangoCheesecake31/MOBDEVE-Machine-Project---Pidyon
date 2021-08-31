@@ -1,5 +1,6 @@
 package com.mobdeve.s11.g25.pidyon.model.adapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +18,12 @@ import java.util.ArrayList;
 public class ContactAdapter extends RecyclerView.Adapter<ContactViewHolder> {
     // Attributes
     private ArrayList<Contact> data;
+    private Context context;
 
     // Constructor
-    public ContactAdapter(ArrayList<Contact> data) {
+    public ContactAdapter(ArrayList<Contact> data, Context context) {
         this.data = data;
+        this.context = context;
     }
 
     // Methods
@@ -32,7 +35,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactViewHolder> {
 
     @Override
     public void onBindViewHolder(ContactViewHolder holder, int position) {
-        holder.bindData(data.get(position));
+        holder.bindData(data.get(position), context);
     }
 
     @Override

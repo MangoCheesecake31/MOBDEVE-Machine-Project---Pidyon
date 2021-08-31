@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.storage.FirebaseStorage;
@@ -31,7 +30,7 @@ public class BlockedUserViewHolder extends RecyclerView.ViewHolder {
         imageProfile = itemView.findViewById(R.id.imageProfile);
         textName = itemView.findViewById(R.id.textName);
         textEmail = itemView.findViewById(R.id.textEmail);
-        blockUserButton = itemView.findViewById(R.id.imageMessageFriend);
+        blockUserButton = itemView.findViewById(R.id.imageAcceptFriend);
     }
 
     // Methods
