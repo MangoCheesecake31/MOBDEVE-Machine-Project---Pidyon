@@ -30,9 +30,6 @@ public class FriendRequestViewHolder extends RecyclerView.ViewHolder {
     private AppCompatImageView imageAcceptRequest;
     private AppCompatImageView imageDeclineRequest;
 
-    private DatabaseReference firebaseDatabase = FirebaseDatabase.getInstance().getReference();
-    private String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
     // Constructors
     public FriendRequestViewHolder(View itemView) {
         super(itemView);
@@ -62,51 +59,13 @@ public class FriendRequestViewHolder extends RecyclerView.ViewHolder {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        // Accept Requests
-        imageAcceptRequest.setOnClickListener(v -> {
-            buttonPressed();
-            // Remove Requests
-            removeRequests(contact);
-            imageAcceptRequest.setImageResource(R.drawable.ic_photo_black_48dp);
-
-            // Add Contact
-            firebaseDatabase.child("Contacts").child(uid).push().child("contactID").setValue(contact.getContactID());
-        });
-
-        // Decline Requests
-        imageDeclineRequest.setOnClickListener(v -> {
-            buttonPressed();
-            // Remove Requests
-            removeRequests(contact);
-            imageDeclineRequest.setImageResource(R.drawable.ic_photo_black_48dp);
-        });
     }
 
-    private void removeRequests(Contact contact) {
-        // Remove Send Request
-        firebaseDatabase.child("Requests").child("Send").child(contact.getContactID()).get().addOnCompleteListener(send_task -> {
-            for (DataSnapshot dss: send_task.getResult().getChildren()) {
-                if (dss.child("contactID").getValue(String.class).equalsIgnoreCase(uid)) {
-                    firebaseDatabase.child("Requests").child("Send").child(contact.getContactID()).child(dss.getKey()).removeValue();
-                    Log.d("PROGRAM-FLOW", "Send Request Removed");
-                }
-            }
-        });
+    public void bindAcceptButton(View.OnClickListener accept) {
+        imageAcceptRequest.setOnClickListener(accept);
+    };
 
-        // Remove Receive Request
-        firebaseDatabase.child("Requests").child("Receive").child(uid).get().addOnCompleteListener(receive_task -> {
-            for (DataSnapshot dss: receive_task.getResult().getChildren()) {
-                if (dss.child("contactID").getValue(String.class).equalsIgnoreCase(contact.getContactID())) {
-                    firebaseDatabase.child("Requests").child("Receive").child(uid).child(dss.getKey()).removeValue();
-                    Log.d("PROGRAM-FLOW", "Receive Request Removed");
-                }
-            }
-        });
-    }
-
-    private void buttonPressed() {
-        imageAcceptRequest.setClickable(false);
-        imageDeclineRequest.setClickable(false);
+    public void bindDeclineButton(View.OnClickListener decline) {
+        imageDeclineRequest.setOnClickListener(decline);
     }
 }

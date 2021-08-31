@@ -28,9 +28,6 @@ public class AddContactViewHolder extends RecyclerView.ViewHolder {
     protected AppCompatImageView imageAddFriend;
     protected AppCompatImageView imageBlockUser;
 
-    private DatabaseReference firebaseDatabase = FirebaseDatabase.getInstance().getReference();
-    private String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
     // Constructor
     public AddContactViewHolder(View itemView) {
         super(itemView);
@@ -60,27 +57,13 @@ public class AddContactViewHolder extends RecyclerView.ViewHolder {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-        // Add Friend
-        imageAddFriend.setOnClickListener(v -> {
-            imageAddFriend.setClickable(false);
-            imageBlockUser.setClickable(false);
-            imageAddFriend.setImageResource(R.drawable.background_chat_input);
+    public void bindAddFriendButton(View.OnClickListener add) {
+        imageAddFriend.setOnClickListener(add);
+    }
 
-            // Update Database (Send Requests)
-            firebaseDatabase.child("Requests").child("Send").child(uid).push().child("contactID").setValue(contact.getContactID());
-            firebaseDatabase.child("Requests").child("Receive").child(contact.getContactID()).push().child("contactID").setValue(uid);
-        });
-
-        // Block User
-        imageBlockUser.setOnClickListener(v -> {
-            imageAddFriend.setClickable(false);
-            imageBlockUser.setClickable(false);
-            imageBlockUser.setImageResource(R.drawable.background_chat_input);
-
-            // Update Database (Blocked Users)
-            firebaseDatabase.child("Blocks").child("Blocking").child(uid).push().child("contactID").setValue(contact.getContactID());
-            firebaseDatabase.child("Blocks").child("BlockedBy").child(contact.getContactID()).push().child("contactID").setValue(uid);
-        });
+    public void bindBlockUserButton(View.OnClickListener block) {
+        imageBlockUser.setOnClickListener(block);
     }
 }

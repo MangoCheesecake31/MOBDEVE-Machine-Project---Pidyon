@@ -41,7 +41,12 @@ public class ContactsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        configureRecyclerView();
     }
 
     @Override
@@ -53,9 +58,6 @@ public class ContactsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d("PROGRAM-FLOW", "Viewing Contacts!");
-
-        // Recycler View
         configureRecyclerView();
     }
 
