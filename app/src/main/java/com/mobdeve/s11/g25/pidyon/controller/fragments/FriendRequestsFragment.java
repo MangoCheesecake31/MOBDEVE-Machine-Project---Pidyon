@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -99,14 +101,24 @@ public class FriendRequestsFragment extends Fragment {
                     Iterable<DataSnapshot> dss = request_snapshot.getChildren();
                     ArrayList<DataSnapshot> data = new ArrayList<>();
                     dss.forEach(data::add);
-                    DataSnapshot new_request = data.get((int) (request_snapshot.getChildrenCount() - 1));
 
-                    String username = new_request.child("username").getValue(String.class);
-                    String email_address = new_request.child("emailAddress").getValue(String.class);
-                    String contact_id = new_request.child("contactID").getValue(String.class);
-                    String token = new_request.child("token").getValue(String.class);
+                    if (binding.usersRecyclerView.getAdapter().getItemCount() < data.size()) {
+                        DataSnapshot new_request = data.get((int) (data.size() - 1));
+                        String contact_uid = new_request.child("contactID").getValue(String.class);
 
-                    adapter.addRequestView(new Contact(username, email_address, contact_id, token));
+                        // Get Contact Object
+                        firebaseDatabase.child("Users").child(new_request.child("contactID").getValue(String.class)).child("Profile").get().addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                DataSnapshot profile = task.getResult();
+                                String username = profile.child("username").getValue(String.class);
+                                String email_address = profile.child("emailAddress").getValue(String.class);
+                                String contact_id = profile.child("contactID").getValue(String.class);
+                                String token = profile.child("token").getValue(String.class);
+
+                                adapter.addRequestView(new Contact(username, email_address, contact_id, token));
+                            }
+                        });
+                    }
                 }
             }
 
@@ -115,36 +127,5 @@ public class FriendRequestsFragment extends Fragment {
                 Log.d("PROGRAM-FLOW", "Retrieving Requests Cancelled!");
             }
         });
-
-
-//        firebaseDatabase.child("Requests").child("Receive").child(uid).get().addOnCompleteListener(receive_task -> {
-//            ArrayList<String> requests = new ArrayList<>();
-//            ArrayList<Contact> data = new ArrayList<>();
-//
-//            for (DataSnapshot dssr: receive_task.getResult().getChildren()) {
-//                requests.add(dssr.child("contactID").getValue(String.class));
-//            }
-//
-//            // Retrieve Contact Objects
-//            firebaseDatabase.child("Users").get().addOnCompleteListener(users_task -> {
-//                for (DataSnapshot dssu : users_task.getResult().getChildren()) {
-//                    if (requests.contains(dssu.getKey())) {
-//                        DataSnapshot profile = dssu.child("Profile");
-//                        String username = profile.child("username").getValue(String.class);
-//                        String email_address = profile.child("emailAddress").getValue(String.class);
-//                        String contact_id = profile.child("contactID").getValue(String.class);
-//                        String token = profile.child("token").getValue(String.class);
-//
-//                        data.add(new Contact(username, email_address, contact_id, token));
-//                    }
-//                }
-//
-//                // Setup RecyclerView
-//                FriendRequestAdapter adapter = new FriendRequestAdapter(data);
-//                binding.usersRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-//                binding.usersRecyclerView.setItemAnimator(new DefaultItemAnimator());
-//                binding.usersRecyclerView.setAdapter(adapter);
-//            });
-//        });
     }
 }

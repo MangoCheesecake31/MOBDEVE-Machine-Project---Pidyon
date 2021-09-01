@@ -85,6 +85,7 @@ public class ChatActivity extends AppCompatActivity {
                 if (send_task.isSuccessful()) {
                     binding.layoutSend.setClickable(true);
                     binding.inputMessage.setText("");
+                    updateLatestChats(current_user, receive_user, time);
                 }
             });
         });
@@ -121,7 +122,7 @@ public class ChatActivity extends AppCompatActivity {
                     Iterable<DataSnapshot> dss = message_snapshot.getChildren();
                     ArrayList<DataSnapshot> data = new ArrayList<>();
                     dss.forEach(data::add);
-                    DataSnapshot new_message = data.get((int) (message_snapshot.getChildrenCount() - 1));
+                    DataSnapshot new_message = data.get((int) (data.size() - 1));
 
                     String text = new_message.child("text").getValue(String.class);
                     String sender = new_message.child("sender").getValue(String.class);
@@ -144,5 +145,10 @@ public class ChatActivity extends AppCompatActivity {
         receive_user = getIntent().getStringExtra("CONTACT_ID");
         uid_A = (current_user.compareTo(receive_user) < 0) ? current_user : receive_user;
         uid_B = (current_user.compareTo(receive_user) < 0) ? receive_user : current_user;
+    }
+
+    private void updateLatestChats(String sender, String receiver, String time) {
+        firebaseDatabase.child("Recent").child(sender).child(receiver).child("time").setValue(time);
+        firebaseDatabase.child("Recent").child(receiver).child(sender).child("time").setValue(time);
     }
 }

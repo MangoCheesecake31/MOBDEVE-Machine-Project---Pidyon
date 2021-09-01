@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +21,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mobdeve.s11.g25.pidyon.R;
 import com.mobdeve.s11.g25.pidyon.databinding.FragmentChatsBinding;
+import com.mobdeve.s11.g25.pidyon.model.Contact;
+import com.mobdeve.s11.g25.pidyon.model.adapters.ChatAdapter;
+import com.mobdeve.s11.g25.pidyon.model.adapters.ContactAdapter;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChatsFragment extends Fragment {
     // Attributes
@@ -50,17 +61,49 @@ public class ChatsFragment extends Fragment {
     }
 
     private void configureRecyclerView() {
-        firebaseDatabase.addValueEventListener(new ValueEventListener() {
+        firebaseDatabase.child("Recent").child(uid).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
+            public void onDataChange(DataSnapshot chat_snapshot) {
+                ArrayList<String> chats = new ArrayList<>();
+//                ArrayList<String> times = new ArrayList<>();
+                ArrayList<Contact> data = new ArrayList<>();
+
+                for (DataSnapshot dss: chat_snapshot.getChildren()) {
+                    chats.add(dss.getKey());
+//                    times.add(dss.child("time").getValue(String.class));
+                }
+
+                // Retrieve Contact Objects
+                firebaseDatabase.child("Users").get().addOnCompleteListener(users_task -> {
+                    for (DataSnapshot dssu: users_task.getResult().getChildren()) {
+                        if (chats.contains(dssu.getKey())) {
+                            DataSnapshot profile = dssu.child("Profile");
+                            String username = profile.child("username").getValue(String.class);
+                            String email_address = profile.child("emailAddress").getValue(String.class);
+                            String contact_id = profile.child("contactID").getValue(String.class);
+                            String token = profile.child("token").getValue(String.class);
+
+                            data.add(new Contact(username, email_address, contact_id, token));
+                        }
+                    }
+
+                    // Sort Contacts by Recent
+                    Collections.sort(data);
 
 
+                    // Setup RecyclerView
+                    ChatAdapter adapter = new ChatAdapter(data, getActivity());
+                    binding.conversationsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                    binding.conversationsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                    binding.conversationsRecyclerView.setAdapter(adapter);
+                });
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-
+                Log.d("PROGRAM-FLOW", "Retrieving Recent Chats Cancelled");
             }
         });
     }
+
 }

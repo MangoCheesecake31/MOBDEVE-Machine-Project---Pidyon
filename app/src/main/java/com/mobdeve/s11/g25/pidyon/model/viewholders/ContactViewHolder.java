@@ -45,8 +45,8 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
     public void bindData(Contact contact, Context context) {
         textName.setText(contact.getUsername());
         textEmail.setText(contact.getEmailAddress());
-        button_A.setVisibility(View.GONE);
-        button_B.setVisibility(View.GONE);
+        button_A.setVisibility(View.INVISIBLE);
+        button_B.setVisibility(View.INVISIBLE);
 
         // Load Image
         StorageReference storage = FirebaseStorage.getInstance().getReference("user_avatars/" + contact.getContactID());
@@ -68,5 +68,7 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
         textName.setOnClickListener(chat_event);
         textEmail.setOnClickListener(chat_event);
         imageProfile.setOnClickListener(chat_event);
+        button_A.setOnClickListener(chat_event);
+        button_B.setOnClickListener(chat_event);
     }
 }
