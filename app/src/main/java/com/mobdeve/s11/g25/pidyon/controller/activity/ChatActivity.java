@@ -1,5 +1,6 @@
 package com.mobdeve.s11.g25.pidyon.controller.activity;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -23,6 +24,7 @@ import com.mobdeve.s11.g25.pidyon.model.adapters.MessageAdapter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Locale;
 
 public class ChatActivity extends AppCompatActivity {
@@ -32,6 +34,8 @@ public class ChatActivity extends AppCompatActivity {
     private String uid_A;
     private String uid_B;
     private DatabaseReference firebaseDatabase = FirebaseDatabase.getInstance().getReference();
+    private MessageAdapter adapter;
+    private boolean loaded = false;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -88,25 +92,44 @@ public class ChatActivity extends AppCompatActivity {
 
     private void configureRecyclerView() {
         firebaseDatabase.child("Chats").child(uid_A).child(uid_B).addValueEventListener(new ValueEventListener() {
-            // Retrieve Messages
+            // Retrieve All Messages
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onDataChange(DataSnapshot message_snapshot) {
-                ArrayList<PidyonMessage> data = new ArrayList<>();
-                for (DataSnapshot dss: message_snapshot.getChildren()) {
-                    String text = dss.child("text").getValue(String.class);
-                    String sender = dss.child("sender").getValue(String.class);
-                    String receiver = dss.child("receiver").getValue(String.class);
-                    String time = dss.child("time").getValue(String.class);
+                // Initial
+                if (!loaded) {
+                    ArrayList<PidyonMessage> data = new ArrayList<>();
+                    for (DataSnapshot dss: message_snapshot.getChildren()) {
+                        String text = dss.child("text").getValue(String.class);
+                        String sender = dss.child("sender").getValue(String.class);
+                        String receiver = dss.child("receiver").getValue(String.class);
+                        String time = dss.child("time").getValue(String.class);
 
-                    data.add(new PidyonMessage(text, sender, receiver, time));
+                        data.add(new PidyonMessage(text, sender, receiver, time));
+                    }
+
+                    // Setup RecyclerView
+                    adapter = new MessageAdapter(data, getApplicationContext());
+                    binding.chatRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    binding.chatRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                    binding.chatRecyclerView.setAdapter(adapter);
+                    binding.chatRecyclerView.scrollToPosition(data.size() - 1);
+                    loaded = true;
+
+                // Ongoing
+                } else {
+                    Iterable<DataSnapshot> dss = message_snapshot.getChildren();
+                    ArrayList<DataSnapshot> data = new ArrayList<>();
+                    dss.forEach(data::add);
+                    DataSnapshot new_message = data.get((int) (message_snapshot.getChildrenCount() - 1));
+
+                    String text = new_message.child("text").getValue(String.class);
+                    String sender = new_message.child("sender").getValue(String.class);
+                    String receiver = new_message.child("receiver").getValue(String.class);
+                    String time = new_message.child("time").getValue(String.class);
+
+                    adapter.addMessageView(new PidyonMessage(text, sender, receiver, time));
                 }
-
-                // Setup RecyclerView
-                MessageAdapter adapter = new MessageAdapter(data, getApplicationContext());
-                binding.chatRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                binding.chatRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                binding.chatRecyclerView.setAdapter(adapter);
-                binding.chatRecyclerView.scrollToPosition(data.size() - 1);
             }
 
             @Override

@@ -22,11 +22,11 @@ import java.io.IOException;
 
 public class AddContactViewHolder extends RecyclerView.ViewHolder {
     // Attributes
-    protected TextView textName;
-    protected TextView textEmail;
-    protected RoundedImageView imageProfile;
-    protected AppCompatImageView imageAddFriend;
-    protected AppCompatImageView imageBlockUser;
+    private TextView textName;
+    private TextView textEmail;
+    private RoundedImageView imageProfile;
+    private AppCompatImageView imageAddFriend;
+    private AppCompatImageView imageBlockUser;
 
     // Constructor
     public AddContactViewHolder(View itemView) {

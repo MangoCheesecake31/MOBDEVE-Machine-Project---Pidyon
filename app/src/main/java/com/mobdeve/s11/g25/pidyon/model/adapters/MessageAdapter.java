@@ -61,4 +61,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageViewHolder> {
             return MessageUser.RECEIVER;
         }
     }
+
+    public void addMessageView(PidyonMessage message) {
+        data.add(message);
+        notifyItemInserted(data.size() - 1);
+    }
 }

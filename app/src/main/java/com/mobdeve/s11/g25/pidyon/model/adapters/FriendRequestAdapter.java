@@ -88,4 +88,9 @@ public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestView
         firebaseDatabase.child("Contacts").child(uid).push().child("contactID").setValue(contact.getContactID());
         firebaseDatabase.child("Contacts").child(contact.getContactID()).push().child("contactID").setValue(uid);
     }
+
+    public void addRequestView(Contact contact) {
+        data.add(contact);
+        notifyItemInserted(data.size() - 1);
+    }
 }
