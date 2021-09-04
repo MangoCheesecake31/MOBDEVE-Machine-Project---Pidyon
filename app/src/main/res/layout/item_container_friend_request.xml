@@ -58,7 +58,7 @@
         android:layout_marginEnd="@dimen/_5ssp"
         android:background="@drawable/background_icon"
         android:padding="@dimen/_6ssp"
-        android:src="@drawable/ic_chat"
+        android:src="@drawable/ic_add_friend"
         app:layout_constraintEnd_toStartOf="@id/imageDeclineFriend"
         app:layout_constraintTop_toTopOf="parent"
         android:tint="@color/white"/>
