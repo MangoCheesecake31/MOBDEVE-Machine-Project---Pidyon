@@ -6,6 +6,7 @@ public class Contact implements Comparable {
     private String email_address;
     private String contact_id;
     private String token;
+    private String latest_chat_time;
 
     // Constructor
     public Contact() {
@@ -32,9 +33,13 @@ public class Contact implements Comparable {
 
     public String getToken() { return token; }
 
-    public void setToken() {
+    public void setToken(String token) {
         this.token = token;
     }
+
+    public String getLatestChatTime() { return this.latest_chat_time; }
+
+    public void setLatest_chat_time(String time) { this.latest_chat_time = time; }
 
     @Override
     public String toString() {

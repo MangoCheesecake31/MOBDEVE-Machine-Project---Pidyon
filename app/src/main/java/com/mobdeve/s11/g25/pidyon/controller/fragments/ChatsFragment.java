@@ -22,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.mobdeve.s11.g25.pidyon.R;
 import com.mobdeve.s11.g25.pidyon.databinding.FragmentChatsBinding;
 import com.mobdeve.s11.g25.pidyon.model.Contact;
+import com.mobdeve.s11.g25.pidyon.model.ContactTimeComparator;
 import com.mobdeve.s11.g25.pidyon.model.adapters.ChatAdapter;
 import com.mobdeve.s11.g25.pidyon.model.adapters.ContactAdapter;
 
@@ -65,12 +66,12 @@ public class ChatsFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot chat_snapshot) {
                 ArrayList<String> chats = new ArrayList<>();
-//                ArrayList<String> times = new ArrayList<>();
+                ArrayList<String> times = new ArrayList<>();
                 ArrayList<Contact> data = new ArrayList<>();
 
                 for (DataSnapshot dss: chat_snapshot.getChildren()) {
                     chats.add(dss.getKey());
-//                    times.add(dss.child("time").getValue(String.class));
+                    times.add(dss.child("time").getValue(String.class));
                 }
 
                 // Retrieve Contact Objects
@@ -83,13 +84,15 @@ public class ChatsFragment extends Fragment {
                             String contact_id = profile.child("contactID").getValue(String.class);
                             String token = profile.child("token").getValue(String.class);
 
-                            data.add(new Contact(username, email_address, contact_id, token));
+                            Contact contact = new Contact(username, email_address, contact_id, token);
+                            contact.setLatest_chat_time(times.get(chats.indexOf(dssu.getKey())));
+
+                            data.add(contact);
                         }
                     }
 
                     // Sort Contacts by Recent
-                    Collections.sort(data);
-
+                    Collections.sort(data, new ContactTimeComparator());
 
                     // Setup RecyclerView
                     ChatAdapter adapter = new ChatAdapter(data, getActivity());

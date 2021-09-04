@@ -77,7 +77,7 @@ public class ChatActivity extends AppCompatActivity {
 
             // Get Time
             LocalDateTime ldt = LocalDateTime.now().plusDays(1);
-            DateTimeFormatter format = DateTimeFormatter.ofPattern("mm:ss", Locale.ENGLISH);
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.ENGLISH);
             String time = format.format(ldt);
 
             // Send Message

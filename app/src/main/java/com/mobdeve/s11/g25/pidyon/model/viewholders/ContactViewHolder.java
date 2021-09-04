@@ -28,7 +28,7 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
     private TextView textName;
     private TextView textEmail;
     private AppCompatImageView button_A;
-    private AppCompatImageView button_B;
+    private AppCompatImageView imageUnfriend;
 
     // Constructor
     public ContactViewHolder(View itemView) {
@@ -38,7 +38,7 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
         textName = itemView.findViewById(R.id.textName);
         textEmail = itemView.findViewById(R.id.textEmail);
         button_A = itemView.findViewById(R.id.imageAddFriend);
-        button_B = itemView.findViewById(R.id.imageBlockUser);
+        imageUnfriend = itemView.findViewById(R.id.imageBlockUser);
     }
 
     // Methods
@@ -46,7 +46,7 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
         textName.setText(contact.getUsername());
         textEmail.setText(contact.getEmailAddress());
         button_A.setVisibility(View.INVISIBLE);
-        button_B.setVisibility(View.INVISIBLE);
+        imageUnfriend.setImageResource(R.drawable.ic_unfriend);
 
         // Load Image
         StorageReference storage = FirebaseStorage.getInstance().getReference("user_avatars/" + contact.getContactID());
@@ -69,6 +69,9 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
         textEmail.setOnClickListener(chat_event);
         imageProfile.setOnClickListener(chat_event);
         button_A.setOnClickListener(chat_event);
-        button_B.setOnClickListener(chat_event);
+    }
+
+    public void bindUnfriendButton(View.OnClickListener unfriend) {
+        imageUnfriend.setOnClickListener(unfriend);
     }
 }

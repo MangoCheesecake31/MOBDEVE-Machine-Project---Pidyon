@@ -68,6 +68,7 @@ public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestView
                 if (dss.child("contactID").getValue(String.class).equalsIgnoreCase(uid)) {
                     firebaseDatabase.child("Requests").child("Send").child(contact.getContactID()).child(dss.getKey()).removeValue();
                     Log.d("PROGRAM-FLOW", "Send Request Removed");
+                    break;
                 }
             }
         });
@@ -78,6 +79,7 @@ public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestView
                 if (dss.child("contactID").getValue(String.class).equalsIgnoreCase(contact.getContactID())) {
                     firebaseDatabase.child("Requests").child("Receive").child(uid).child(dss.getKey()).removeValue();
                     Log.d("PROGRAM-FLOW", "Receive Request Removed");
+                    break;
                 }
             }
         });
