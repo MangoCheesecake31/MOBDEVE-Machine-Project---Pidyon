@@ -1,6 +1,5 @@
 package com.mobdeve.s11.g25.pidyon.controller.activity;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -45,6 +44,7 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         orderUIDS();
+        bindUsername();
         configureRecyclerView();
         setListeners();
     }
@@ -150,5 +150,9 @@ public class ChatActivity extends AppCompatActivity {
     private void updateLatestChats(String sender, String receiver, String time) {
         firebaseDatabase.child("Recent").child(sender).child(receiver).child("time").setValue(time);
         firebaseDatabase.child("Recent").child(receiver).child(sender).child("time").setValue(time);
+    }
+
+    private void bindUsername() {
+        binding.textName.setText(getIntent().getStringExtra("USERNAME"));
     }
 }

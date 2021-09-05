@@ -48,6 +48,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactViewHolder> {
         holder.bindData(data.get(position), context);
         holder.bindUnfriendButton(v -> {
             removeContact(data.get(position));
+            removeRecent(data.get(position));
             removeAt(position);
         });
     }
@@ -85,5 +86,10 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactViewHolder> {
                 }
             }
         });
+    }
+
+    public void removeRecent(Contact contact) {
+        firebaseDatabase.child("Recent").child(uid).child(contact.getContactID()).child("time").removeValue();
+        firebaseDatabase.child("Recent").child(contact.getContactID()).child(uid).child("time").removeValue();
     }
 }

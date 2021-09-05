@@ -59,6 +59,11 @@ public class PasswordRecoveryActivity extends AppCompatActivity {
                 }
             });
         });
+
+        // Back Sign In
+        binding.textSignIn.setOnClickListener(v -> {
+            onBackPressed();
+        });
     }
 
     // Validate Data
