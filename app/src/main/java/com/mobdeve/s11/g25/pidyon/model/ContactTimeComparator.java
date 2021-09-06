@@ -16,7 +16,7 @@ public class ContactTimeComparator implements Comparator<Contact> {
     // Methods
     @Override
     public int compare(Contact o1, Contact o2) {
-        return convertToMilliseconds(o1.getLatestChatTime()) - convertToMilliseconds(o2.getLatestChatTime());
+        return convertToMilliseconds(o2.getLatestChatTime()) - convertToMilliseconds(o1.getLatestChatTime());
     }
 
     private int convertToMilliseconds(String time) {
